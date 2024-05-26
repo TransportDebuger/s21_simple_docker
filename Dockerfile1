@@ -1,0 +1,12 @@
+FROM nginx:latest
+
+COPY ./nginx-1.conf /etc/nginx/nginx.conf
+COPY ./fcgi-app.c /etc/nginx/fcgi-app.c
+COPY ./t4init.sh /etc/nginx/init.sh
+
+RUN apt-get update &&  \
+    apt-get install -y gcc spawn-fcgi libfcgi-dev && \ 
+    gcc /etc/nginx/fcgi-app.c -o /etc/nginx/webserver -l fcgi && \
+    chmod +x /etc/nginx/init.sh
+
+ENTRYPOINT [ "/etc/nginx/init.sh" ]
